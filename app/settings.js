@@ -4,7 +4,7 @@ import { Box } from '@/components/Box';
 const index = () => {
   return (
     <Box>
-        <ThemedText type="title">Home</ThemedText>
+        <ThemedText type="title">settings</ThemedText>
     </Box>
   )
 }
