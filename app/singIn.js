@@ -1,7 +1,7 @@
 import { ThemedText } from '@/components/ThemedText';
 import { Box } from '@/components/Box';
 
-const index = () => {
+const singIn = () => {
   return (
     <Box>
         <ThemedText type="title">settings</ThemedText>
@@ -9,4 +9,4 @@ const index = () => {
   )
 }
 
-export default index
+export default singIn;

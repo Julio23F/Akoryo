@@ -1,12 +1,12 @@
 import { ThemedText } from '@/components/ThemedText';
 import { Box } from '@/components/Box';
 
-const index = () => {
+const singUp = () => {
   return (
     <Box>
-        <ThemedText type="title">Profile</ThemedText>
+        <ThemedText type="title">settings</ThemedText>
     </Box>
   )
 }
 
-export default index
+export default singUp;
