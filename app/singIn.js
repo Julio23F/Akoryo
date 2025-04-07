@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import {
-  View,
   Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Image,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
 } from 'react-native';
+import { Box } from '@/components/Box';
 import { router } from 'expo-router';
 import { MessageSquare } from 'lucide-react-native';
 
@@ -27,15 +25,15 @@ export default function SingIn() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
-      <View style={styles.content}>
-        <View style={styles.header}>
+      <Box style={styles.content}>
+        <Box style={styles.header}>
           <MessageSquare size={48} color="#007AFF" />
           <Text style={styles.title}>Welcome Back</Text>
           <Text style={styles.subtitle}>Sign in to continue</Text>
-        </View>
+        </Box>
 
-        <View style={styles.form}>
-          <View style={styles.inputContainer}>
+        <Box style={styles.form}>
+          <Box style={styles.inputContainer}>
             <Text style={styles.label}>Email</Text>
             <TextInput
               style={styles.input}
@@ -46,9 +44,9 @@ export default function SingIn() {
               autoCapitalize="none"
               autoComplete="email"
             />
-          </View>
+          </Box>
 
-          <View style={styles.inputContainer}>
+          <Box style={styles.inputContainer}>
             <Text style={styles.label}>Password</Text>
             <TextInput
               style={styles.input}
@@ -57,7 +55,7 @@ export default function SingIn() {
               onChangeText={setPassword}
               secureTextEntry
             />
-          </View>
+          </Box>
 
           <TouchableOpacity
             style={styles.forgotPassword}
@@ -72,15 +70,15 @@ export default function SingIn() {
           >
             <Text style={styles.loginButtonText}>Sign In</Text>
           </TouchableOpacity>
-        </View>
+        </Box>
 
-        <View style={styles.footer}>
+        <Box style={styles.footer}>
           <Text style={styles.footerText}>Don't have an account? </Text>
           <TouchableOpacity onPress={() => {/* Implement signup navigation */}}>
             <Text style={styles.signupText}>Sign Up</Text>
           </TouchableOpacity>
-        </View>
-      </View>
+        </Box>
+      </Box>
     </KeyboardAvoidingView>
   );
 }

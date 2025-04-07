@@ -20,7 +20,7 @@ const MainLayout = () => {
     }
     else if(isAuthentificated == false) {
       // redirect to login
-      router.replace("singIn");
+      router.replace("singUp");
 
     }
   },[isAuthentificated])
