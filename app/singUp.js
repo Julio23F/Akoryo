@@ -12,8 +12,11 @@ import {
 } from 'react-native';
 import { router, Link } from 'expo-router';
 import { MessageSquare } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
 
 export default function SingUp() {
+  const router = useRouter();
+
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -97,11 +100,17 @@ export default function SingUp() {
             </TouchableOpacity>
           </View>
 
-          <View style={styles.footer}>
+          {/* <View style={styles.footer}>
             <Text style={styles.footerText}>Already have an account? </Text>
-            <Link href="/" style={styles.registerLink}>
+            <Link href="/singIn" style={styles.registerLink}>
               <Text style={styles.registerText}>Sign In</Text>
             </Link>
+          </View> */}
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>Already have an account? </Text>
+            <TouchableOpacity onPress={() => {router.replace("singIn");}}>
+              <Text style={styles.signupText}>Sign In</Text>
+            </TouchableOpacity>
           </View>
 
           <Text style={styles.termsText}>

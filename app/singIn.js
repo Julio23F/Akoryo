@@ -10,8 +10,11 @@ import {
 import { Box } from '@/components/Box';
 import { router } from 'expo-router';
 import { MessageSquare } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
 
 export default function SingIn() {
+  const router = useRouter();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -74,7 +77,7 @@ export default function SingIn() {
 
         <Box style={styles.footer}>
           <Text style={styles.footerText}>Don't have an account? </Text>
-          <TouchableOpacity onPress={() => {/* Implement signup navigation */}}>
+          <TouchableOpacity onPress={() => {router.replace("singUp");}}>
             <Text style={styles.signupText}>Sign Up</Text>
           </TouchableOpacity>
         </Box>
