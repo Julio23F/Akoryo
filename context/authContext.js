@@ -1,7 +1,7 @@
-import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
-
+import { auth, db } from "../firebaseConfig";
 
 export const AuthContext = createContext();
 
@@ -39,29 +39,37 @@ export const AuthContextProvider = ({children}) => {
 
     const register = async (username, email, password) => {
         try {
-            const response = await createUserWithEmailAndPassword(auth, email, password);
-            console.log("response.createUser", response.user);
-
-            // setIsAuthentificated(true);
-            // setUser(user);
-
+          const response = await createUserWithEmailAndPassword(auth, email, password);
+          try {
             await setDoc(doc(db, "users", response.user.uid), {
-                username,
-                userid: response.user.uid
+              username,
+              userid: response.user.uid
             });
-
-            return {succes: true, data: response.user}
-
+          } catch (e) {
+            console.log("Erreur dans setDoc :", e.message);
+            return { succes: false, msg: "Erreur lors de l'enregistrement de l'utilisateur dans la base de données" };
+          }
+      
+          return { succes: true, data: response.user };
         } catch (error) {
-            return {succes: false, data: error.message}
+          let msg = error.message;
+          if (msg.includes("(auth/invalid-email)")) msg = "Adresse e-mail invalide";
+          if (msg.includes("(auth/email-already-in-use)")) msg = "Cette adresse e-mail est déjà utilisée";
+          if (msg.includes("(auth/weak-password)")) msg = "Le mot de passe est trop faible (minimum 6 caractères)";
+      
+          console.log("error.message", error.message);
+          return { succes: false, msg };
         }
-    }
+    };
+      
 
     const logout = async () => {
         try {
+            await signOut(auth);
+            return {succes: true}
             
         } catch (error) {
-            
+            return {succes: false, msg: error.message}
         }
     }
 
