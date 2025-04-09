@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Box,
   Text,
   TextInput,
   TouchableOpacity,
@@ -11,6 +10,8 @@ import {
   Image,
   Alert,
 } from 'react-native';
+import { Box } from '@/components/Box';
+
 import { useRouter } from 'expo-router';
 import { MessageSquare, Eye, EyeOff } from 'lucide-react-native';
 import { StatusBar } from 'expo-status-bar';
@@ -23,10 +24,11 @@ export default function SingUp() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-
+  const [showConfPassword, setShowConfPassword] = useState(false);
+  
   const handleRegister = () => {
     if(!(email && password)) {
-      Alert.alert("Sing In", "Veillez remplir tous les champs");
+      Alert.alert("Sing Up", "Veillez remplir tous les champs");
       return;
     }
 
@@ -82,11 +84,11 @@ export default function SingUp() {
               
               <Box style={styles.passwordField}>
                 <TextInput
-                  style={styles.input}
-                  placeholder="Créez un mot de passe"
-                  value={password}
-                  onChangeText={setPassword}
-                  secureTextEntry
+                    style={[styles.input, { flex: 1, borderWidth: 0, backgroundColor: 'transparent' }]}
+                    placeholder="Enter your password"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry={!showPassword}
                 />
                 <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                   {showPassword ? (
@@ -99,14 +101,30 @@ export default function SingUp() {
             </Box>
 
             <Box style={styles.inputContainer}>
-              <Text style={styles.label}>Confirmer le mot de passe</Text>
+              {/* <Text style={styles.label}>Confirmer le mot de passe</Text>
               <TextInput
                 style={styles.input}
                 placeholder="Confirmez votre mot de passe"
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 secureTextEntry
-              />
+              /> */}
+              <Box style={styles.passwordField}>
+                <TextInput
+                    style={[styles.input, { flex: 1, borderWidth: 0, backgroundColor: 'transparent' }]}
+                    placeholder="Confirmez votre mot de passe"
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                    secureTextEntry={!showConfPassword}
+                />
+                <TouchableOpacity onPress={() => setShowConfPassword(!showConfPassword)}>
+                  {showConfPassword ? (
+                    <EyeOff size={20} color="#999" />
+                  ) : (
+                    <Eye size={20} color="#999" />
+                  )}
+                </TouchableOpacity>
+              </Box>
             </Box>
 
             <TouchableOpacity
@@ -168,6 +186,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     color: '#1A1A1A',
+  },
+  passwordField: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+    borderRadius: 8,
+    paddingRight: 16,
+    backgroundColor: '#F8F8F8',
+    height: 48,
   },
   input: {
     height: 48,

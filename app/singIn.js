@@ -6,7 +6,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  View,
+  Alert,
 } from 'react-native';
 import { Box } from '@/components/Box';
 import { router } from 'expo-router';
@@ -22,7 +22,10 @@ export default function SingIn() {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = () => {
-    // Implémenter la logique de connexion ici
+    if(!(email && password)) {
+      Alert.alert("Sing In", "Veillez remplir tous les champs");
+      return;
+    }
     router.push('home');
   };
 
