@@ -6,20 +6,23 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  View,
 } from 'react-native';
 import { Box } from '@/components/Box';
 import { router } from 'expo-router';
-import { MessageSquare } from 'lucide-react-native';
+import { MessageSquare, Eye, EyeOff } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 
 export default function SingIn() {
   const router = useRouter();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = () => {
-    // Implement login logic here
+    // Implémenter la logique de connexion ici
     router.push('home');
   };
 
@@ -29,6 +32,7 @@ export default function SingIn() {
       style={styles.container}
     >
       <Box style={styles.content}>
+        <StatusBar style='dark'/>
         <Box style={styles.header}>
           <MessageSquare size={48} color="#007AFF" />
           <Text style={styles.title}>Welcome Back</Text>
@@ -51,18 +55,29 @@ export default function SingIn() {
 
           <Box style={styles.inputContainer}>
             <Text style={styles.label}>Password</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter your password"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-            />
+            <Box style={styles.passwordField}>
+              <TextInput
+                style={[styles.input, { flex: 1, borderWidth: 0, backgroundColor: 'transparent' }]}
+                placeholder="Enter your password"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!showPassword}
+              />
+              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                {showPassword ? (
+                  <EyeOff size={20} color="#999" />
+                ) : (
+                  <Eye size={20} color="#999" />
+                )}
+              </TouchableOpacity>
+            </Box>
           </Box>
 
           <TouchableOpacity
             style={styles.forgotPassword}
-            onPress={() => {/* Implement forgot password */}}
+            onPress={() => {
+              // Implémenter mot de passe oublié
+            }}
           >
             <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>
@@ -77,7 +92,7 @@ export default function SingIn() {
 
         <Box style={styles.footer}>
           <Text style={styles.footerText}>Don't have an account? </Text>
-          <TouchableOpacity onPress={() => {router.replace("singUp");}}>
+          <TouchableOpacity onPress={() => { router.replace("singUp"); }}>
             <Text style={styles.signupText}>Sign Up</Text>
           </TouchableOpacity>
         </Box>
@@ -130,6 +145,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     fontSize: 16,
     backgroundColor: '#F8F8F8',
+  },
+  passwordField: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    backgroundColor: '#F8F8F8',
+    height: 48,
   },
   forgotPassword: {
     alignSelf: 'flex-end',

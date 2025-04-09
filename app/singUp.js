@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  View,
+  Box,
   Text,
   TextInput,
   TouchableOpacity,
@@ -9,10 +9,11 @@ import {
   Platform,
   ScrollView,
   Image,
+  Alert,
 } from 'react-native';
-import { router, Link } from 'expo-router';
-import { MessageSquare } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import { MessageSquare, Eye, EyeOff } from 'lucide-react-native';
+import { StatusBar } from 'expo-status-bar';
 
 export default function SingUp() {
   const router = useRouter();
@@ -21,9 +22,14 @@ export default function SingUp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleRegister = () => {
-    // Implement registration logic here
+    if(!(email && password)) {
+      Alert.alert("Sing In", "Veillez remplir tous les champs");
+      return;
+    }
+
     router.push('home');
   };
 
@@ -33,90 +39,95 @@ export default function SingUp() {
       style={styles.container}
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.content}>
-          <View style={styles.header}>
+        <StatusBar style='dark'/>
+        <Box style={styles.content}>
+          <Box style={styles.header}>
             <Image
               source={{ uri: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=400&auto=format&fit=crop' }}
               style={styles.headerImage}
             />
             <MessageSquare size={48} color="#007AFF" style={styles.logoIcon} />
-            <Text style={styles.title}>Create Account</Text>
-            <Text style={styles.subtitle}>Join our messaging community</Text>
-          </View>
+            <Text style={styles.title}>Créer un compte</Text>
+            <Text style={styles.subtitle}>Rejoignez notre communauté de messagerie</Text>
+          </Box>
 
-          <View style={styles.form}>
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Full Name</Text>
+          <Box style={styles.form}>
+            <Box style={styles.inputContainer}>
+              <Text style={styles.label}>Nom complet</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Enter your full name"
+                placeholder="Entrez votre nom complet"
                 value={fullName}
                 onChangeText={setFullName}
                 autoCapitalize="words"
                 autoComplete="name"
               />
-            </View>
+            </Box>
 
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Email</Text>
+            <Box style={styles.inputContainer}>
+              <Text style={styles.label}>Adresse e-mail</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Enter your email"
+                placeholder="Entrez votre adresse e-mail"
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoComplete="email"
               />
-            </View>
+            </Box>
 
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Password</Text>
+            <Box style={styles.inputContainer}>
+              <Text style={styles.label}>Mot de passe</Text>
+              
+              <Box style={styles.passwordField}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Créez un mot de passe"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                />
+                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                  {showPassword ? (
+                    <EyeOff size={20} color="#999" />
+                  ) : (
+                    <Eye size={20} color="#999" />
+                  )}
+                </TouchableOpacity>
+              </Box>
+            </Box>
+
+            <Box style={styles.inputContainer}>
+              <Text style={styles.label}>Confirmer le mot de passe</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Create a password"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-              />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Confirm Password</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Confirm your password"
+                placeholder="Confirmez votre mot de passe"
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 secureTextEntry
               />
-            </View>
+            </Box>
 
             <TouchableOpacity
               style={styles.registerButton}
               onPress={handleRegister}
             >
-              <Text style={styles.registerButtonText}>Create Account</Text>
+              <Text style={styles.registerButtonText}>Créer un compte</Text>
             </TouchableOpacity>
-          </View>
+          </Box>
 
-          {/* <View style={styles.footer}>
-            <Text style={styles.footerText}>Already have an account? </Text>
-            <Link href="/singIn" style={styles.registerLink}>
-              <Text style={styles.registerText}>Sign In</Text>
-            </Link>
-          </View> */}
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>Already have an account? </Text>
+          <Box style={styles.footer}>
+            <Text style={styles.footerText}>Vous avez déjà un compte ? </Text>
             <TouchableOpacity onPress={() => {router.replace("singIn");}}>
-              <Text style={styles.signupText}>Sign In</Text>
+              <Text style={styles.signupText}>Se connecter</Text>
             </TouchableOpacity>
-          </View>
+          </Box>
 
           <Text style={styles.termsText}>
-            By creating an account, you agree to our Terms of Service and Privacy Policy
+            En créant un compte, vous acceptez nos Conditions d'utilisation et notre Politique de confidentialité.
           </Text>
-        </View>
+        </Box>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -200,5 +211,11 @@ const styles = StyleSheet.create({
     color: '#007AFF',
     fontSize: 14,
     fontWeight: '600',
+  },
+  termsText: {
+    textAlign: 'center',
+    marginTop: 16,
+    fontSize: 12,
+    color: '#999',
   },
 });
