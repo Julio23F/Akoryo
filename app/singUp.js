@@ -57,13 +57,11 @@ export default function SingUp() {
         setLoading(false);
       
         if (!response.succes) {
-          let msg = response.msg;
-          Alert.alert("Inscription", msg);
+          Alert.alert("Inscription", response.msg);
           return;
         }
       
-        // Si tout est bon
-        router.push("home");
+        // router.push("home");
       };
       
 

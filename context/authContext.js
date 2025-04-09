@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
+import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
 import { auth, db } from "../firebaseConfig";
@@ -31,9 +31,14 @@ export const AuthContextProvider = ({children}) => {
 
     const login = async (email, password) => {
         try {
-            
+            console.log("login")
+            const response = signInWithEmailAndPassword(auth, email, password);
+            return { succes: true, data: response.user };
         } catch (error) {
-            
+            let msg = error.message;
+            console.log("error msg")
+            if (msg.includes("(auth/invalid-email)")) msg = "Adresse e-mail invalide";
+            return { succes: false, msg };
         }
     }
 
@@ -55,7 +60,6 @@ export const AuthContextProvider = ({children}) => {
           let msg = error.message;
           if (msg.includes("(auth/invalid-email)")) msg = "Adresse e-mail invalide";
           if (msg.includes("(auth/email-already-in-use)")) msg = "Cette adresse e-mail est déjà utilisée";
-          if (msg.includes("(auth/weak-password)")) msg = "Le mot de passe est trop faible (minimum 6 caractères)";
       
           console.log("error.message", error.message);
           return { succes: false, msg };

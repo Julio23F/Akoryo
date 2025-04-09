@@ -7,26 +7,45 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { Box } from '@/components/Box';
 import { router } from 'expo-router';
 import { MessageSquare, Eye, EyeOff } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useAuh } from '../context/authContext';
 
 export default function SingIn() {
   const router = useRouter();
+  const { login } = useAuh();
 
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async() => {
     if(!(email && password)) {
       Alert.alert("Sing In", "Veillez remplir tous les champs");
       return;
     }
-    router.push('home');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      Alert.alert("Adresse e-mail invalide", "Veuillez entrer une adresse e-mail valide.");
+      return;
+    }
+    setLoading(true);
+
+    const response = await login(email, password);
+    setLoading(false);
+
+    if(!response.succes) {
+      Alert.alert("Inscription", response.msg);
+      return;
+    }
+
+    // router.push('home');
   };
 
   return (
@@ -75,16 +94,18 @@ export default function SingIn() {
               </TouchableOpacity>
             </Box>
           </Box>
-
-          <TouchableOpacity
-            style={styles.forgotPassword}
-            onPress={() => {
-              // Implémenter mot de passe oublié
-            }}
-          >
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-          </TouchableOpacity>
-
+          {
+            loading ? <ActivityIndicator />
+            :
+            <TouchableOpacity
+              style={styles.forgotPassword}
+              onPress={() => {
+                // Implémenter mot de passe oublié
+              }}
+            >
+              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+            </TouchableOpacity>
+          }
           <TouchableOpacity
             style={styles.loginButton}
             onPress={handleLogin}
@@ -155,7 +176,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E5E5E5',
     borderRadius: 8,
-    paddingHorizontal: 16,
+    paddingRight: 16,
     backgroundColor: '#F8F8F8',
     height: 48,
   },
