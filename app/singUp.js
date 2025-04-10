@@ -67,8 +67,8 @@ export default function SingUp() {
 
     return (
         <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.container}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.container}
         >
         <ScrollView contentContainerStyle={styles.scrollContent}>
             <StatusBar style='dark'/>

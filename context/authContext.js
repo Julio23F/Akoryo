@@ -1,5 +1,5 @@
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
 import { auth, db } from "../firebaseConfig";
 
@@ -19,6 +19,7 @@ export const AuthContextProvider = ({children}) => {
             if(user) {
                 setIsAuthentificated(true);
                 setUser(user);
+                updateUserData(user.uid);
             }
             else{
                 setIsAuthentificated(false);
@@ -29,9 +30,18 @@ export const AuthContextProvider = ({children}) => {
 
     }, []);
 
+    const updateUserData = async (userId) => {
+        const docRef = doc(db, "users", userId);
+        const docSnap = getDoc(docRef);
+
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            setUser({...user, username: data.username, userid: data.userId});
+        }
+    }
+
     const login = async (email, password) => {
         try {
-            console.log("login")
             const response = signInWithEmailAndPassword(auth, email, password);
             return { succes: true, data: response.user };
         } catch (error) {
@@ -48,7 +58,7 @@ export const AuthContextProvider = ({children}) => {
           try {
             await setDoc(doc(db, "users", response.user.uid), {
               username,
-              userid: response.user.uid
+              userId: response.user.uid
             });
           } catch (e) {
             console.log("Erreur dans setDoc :", e.message);
