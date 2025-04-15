@@ -1,6 +1,7 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { Mail, Bell, Globe2, CreditCard, Heart, Settings, LogOut } from 'lucide-react-native';
 import { useAuh } from '../../context/authContext';
+import { useState } from 'react';
 
 const MENU_ITEMS = [
   { icon: Mail, label: 'Edit profile' },
@@ -13,11 +14,13 @@ const MENU_ITEMS = [
 
 export default function Profile() {
   const { logout } = useAuh();
+  const [isShowingModal, setShowModal] = useState(false);
 
   const handleLogout = async () => {
     await logout();
-  }
-  
+    setShowModal(false);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -36,19 +39,38 @@ export default function Profile() {
             <Text style={styles.menuText}>{item.label}</Text>
           </TouchableOpacity>
         ))}
-        <TouchableOpacity style={styles.menuItem}>
+        <TouchableOpacity style={styles.menuItem} onPress={() => setShowModal(true)}>
           <LogOut size={24} color="#666" />
           <Text style={styles.menuText}>Logout</Text>
         </TouchableOpacity>
       </View>
 
-      {/* <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <LogOut size={24} color="#fff" />
-        <Text style={styles.logoutText}>Logout</Text>
-      </TouchableOpacity> */}
+      {/* Modal de confirmation */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isShowingModal}
+        onRequestClose={() => setShowModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Se déconnecter ?</Text>
+            <Text style={styles.modalMessage}>Voulez-vous vraiment vous déconnecter ?</Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity style={styles.cancelButton} onPress={() => setShowModal(false)}>
+                <Text style={styles.cancelText}>Annuler</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.confirmButton} onPress={handleLogout}>
+                <Text style={styles.confirmText}>Confirmer</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -98,7 +120,7 @@ const styles = StyleSheet.create({
   //   flexDirection: 'row',
   //   alignItems: 'center',
   //   justifyContent: 'center',
-  //   backgroundColor: '#7c3aed',
+  //   backgroundColor: '#0c3141',
   //   paddingVertical: 16,
   //   borderRadius: 12,
   //   marginTop: 'auto',
@@ -110,4 +132,57 @@ const styles = StyleSheet.create({
   //   fontWeight: '600',
   //   marginLeft: 8,
   // },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 24,
+    width: '80%',
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  modalMessage: {
+    fontSize: 15,
+    color: '#555',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  cancelButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginRight: 10,
+    backgroundColor: '#e0e0e0',
+    alignItems: 'center',
+  },
+  confirmButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 8,
+    backgroundColor: '#0c3141',
+    alignItems: 'center',
+  },
+  cancelText: {
+    color: '#333',
+    fontWeight: '600',
+  },
+  confirmText: {
+    color: '#fff',
+    fontWeight: '600',
+  }
+  
 });
