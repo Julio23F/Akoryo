@@ -1,6 +1,7 @@
-import { View, Text, StyleSheet, FlatList} from 'react-native';
+import { Text, StyleSheet, FlatList} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import ChatItem from '../../components/ChatItem';
+import ChatItem from '@/components/ChatItem';
+import { Box } from '@/components/Box';
 
 
 const messages = [
@@ -45,9 +46,9 @@ const messages = [
 export default function Home() {
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+      <Box style={styles.header}>
         <Text style={styles.title}>Messages</Text>
-      </View>
+      </Box>
       <FlatList
         data={messages}
         renderItem={({ item }) => <ChatItem item={item} />}
