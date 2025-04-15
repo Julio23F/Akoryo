@@ -27,7 +27,7 @@ export default function SingIn() {
 
   const handleLogin = async() => {
     if(!(email && password)) {
-      Alert.alert("Sing In", "Veillez remplir tous les champs");
+      Alert.alert("Sign In", "Veillez remplir tous les champs");
       return;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -57,7 +57,7 @@ export default function SingIn() {
       <Box style={styles.content}>
         <StatusBar style='dark'/>
         <Box style={styles.header}>
-          <MessageSquare size={48} color="#007AFF" />
+          <MessageSquare size={48} color="#0c3141" />
           <Text style={styles.title}>Welcome Back</Text>
           <Text style={styles.subtitle}>Sign in to continue</Text>
         </Box>
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     height: 48,
-    backgroundColor: '#007AFF',
+    backgroundColor: '#0c3141',
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',

@@ -78,7 +78,7 @@ export default function SingUp() {
                 source={{ uri: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=400&auto=format&fit=crop' }}
                 style={styles.headerImage}
                 />
-                <MessageSquare size={48} color="#007AFF" style={styles.logoIcon} />
+                <MessageSquare size={48} color="#0c3141" style={styles.logoIcon} />
                 <Text style={styles.title}>Créer un compte</Text>
                 <Text style={styles.subtitle}>Rejoignez notre communauté de messagerie</Text>
             </Box>
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
   },
   registerButton: {
     height: 48,
-    backgroundColor: '#007AFF',
+    backgroundColor: '#0c3141',
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
