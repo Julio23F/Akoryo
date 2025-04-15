@@ -35,6 +35,7 @@ export default function SingIn() {
       Alert.alert("Adresse e-mail invalide", "Veuillez entrer une adresse e-mail valide.");
       return;
     }
+    
     setLoading(true);
 
     const response = await login(email, password);
