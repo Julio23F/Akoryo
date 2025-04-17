@@ -22,24 +22,26 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
 
 
-  const getUsers = async() => {
+  const getUsers = async () => {
     setLoading(true);
-
-    const q = query(usersRef, where("userId", "!=", user.uid));
-
-    const querySnapshot = await getDocs(q);
-    // console.log("querySnapshot", querySnapshot)
-    let data = [];
-    querySnapshot.forEach((doc) => {
-      data.push({...MESSAGE_FORMAT, ...doc.data()});
-    });
-    setUsers(data);
-    setLoading(false);
-    console.log("user.data.uid", user.uid);
-    console.log("user.data", data);
-
-  }
-
+    try {
+      const q = query(usersRef, where("userId", "!=", user.uid));
+      // getDocs (appel unique)
+      const querySnapshot = await getDocs(q);
+  
+      let data = [];
+      querySnapshot.forEach((doc) => {
+        data.push({ ...MESSAGE_FORMAT, ...doc.data() });
+      });
+  
+      setUsers(data);
+    } catch (err) {
+      console.error("Erreur lors du fetch des utilisateurs :", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   useEffect(() => {
     
     if(user.uid) {

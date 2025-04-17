@@ -1,14 +1,13 @@
-// Import the functions you need from the SDKs you need
+// Import SDKs
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-import {getReactNativePersistence, initializeAuth} from "firebase/auth"
+import { getAuth, initializeAuth, getReactNativePersistence } from "firebase/auth";
+import { getFirestore, collection } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {getFirestore, collection} from "firebase/firestore";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// Platform check
+import Constants from "expo-constants";
+
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyDKdlXYGmq0FxFp00AGTp08V91-gsIJdjY",
   authDomain: "akory-6806c.firebaseapp.com",
@@ -19,15 +18,28 @@ const firebaseConfig = {
   measurementId: "G-2HE190G3SX"
 };
 
-// Initialize Firebase
+// Initialize app
 const app = initializeApp(firebaseConfig);
 
-export const auth = initializeAuth(app, {
-    persistence: getReactNativePersistence(AsyncStorage)
-});
+// Handle Auth depending on platform
+let auth;
 
-export const db = getFirestore(app);
+if (Constants?.platform?.android || Constants?.platform?.ios) {
+  // Mobile (React Native)
+  auth = initializeAuth(app, {
+    persistence: getReactNativePersistence(AsyncStorage),
+  });
+} else {
+  // Web
+  auth = getAuth(app);
+}
 
-export const usersRef = collection(db, "users");
+// Firestore
+const db = getFirestore(app);
 
-export const roomRef = collection(db, "rooms");
+// Collections
+const usersRef = collection(db, "users");
+const roomRef = collection(db, "rooms");
+
+// Exports
+export { auth, db, usersRef, roomRef };

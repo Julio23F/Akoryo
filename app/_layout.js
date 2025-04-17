@@ -24,8 +24,7 @@ const MainLayout = () => {
       router.replace("auth/signIn");
 
     }
-  },[isAuthentificated])
-  
+  },[isAuthentificated])  
   return <Slot />
 }
 

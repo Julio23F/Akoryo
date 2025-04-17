@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect } from 'react';
+import { useState, useLayoutEffect, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,24 +7,80 @@ import {
   Pressable,
   FlatList,
   Image,
+  Alert,
 } from 'react-native';
-import { useLocalSearchParams, Stack, useNavigation } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { Send, ArrowLeft } from 'lucide-react-native';
+import ChatRoomHeader from '../../components/ChatRoomHeader';
+import { useAuth } from '../../context/authContext';
+import { getRoomId } from '../../utils/room';
+import { addDoc, collection, doc, onSnapshot, orderBy, setDoc, Timestamp, query } from 'firebase/firestore';
+import { db } from '../../firebaseConfig';
 
 export default function ChatRoom() {
   const item = useLocalSearchParams();
-  const navigation = useNavigation();
-
+  const {user} = useAuth();
   const [newMessage, setNewMessage] = useState('');
+  const [messages, setMessages] = useState([]);
 
-  const sendMessage = () => {
+  useEffect(()=>{
+    createRoomIfNotExists();
+
+    getMessages();
+  }, []);
+
+  const getMessages = () => {
+    const roomId = getRoomId(user.uid, item.userId);
+    const docRef = doc(db, "rooms", roomId);
+    const messagesRef = collection(docRef, "messages");
+
+    const q = query(messagesRef, orderBy("createdAt", "asc"));
+
+    // onSnapshot (écoute en temps réel)
+    const unsub = onSnapshot(q, (snapshot) => {
+      let allMessages = snapshot.docs.map(doc => {
+        return doc.data();
+      });
+
+      setMessages([...allMessages]);
+    });
+    console.log("messages", messages)
+    return unsub;
+  }
+
+  const createRoomIfNotExists = async() => {
+    const roomId = getRoomId(user.uid, item.userId);
+    await setDoc(doc(db, "rooms", roomId), {
+      roomId,
+      createdAt: Timestamp.fromDate(new Date())
+    });
+  }
+
+
+  const handleSendMessage = () => {
     if (!newMessage.trim()) return;
+
+    try{
+      const roomId = getRoomId(user.uid, item.userId);
+      const docRef = doc(db, "rooms", roomId);
+      const messagesRef = collection(docRef, "messages");
+
+      const newDoc = addDoc(messagesRef, {
+        userId: user.uid,
+        text: newMessage,
+        createdAt: Timestamp.fromDate(new Date())
+      })
+
+    }catch(r){
+      Alert.alert("Alert", e.message);
+    }
+
     setNewMessage('');
   };
 
   return (
     <>
-      <Stack.Screen
+      {/* <Stack.Screen
         options={{
           headerTitle: () => (
             <View style={styles.headerTitle}>
@@ -47,9 +103,32 @@ export default function ChatRoom() {
           },
           headerShadowVisible: false,
         }}
+      /> */}
+      <ChatRoomHeader
+        item={item}
       />
-
       <View style={styles.container}>
+        <FlatList
+          data={messages}
+          keyExtractor={(item) => item.createdAt}
+          inverted
+          contentContainerStyle={styles.messageList}
+          renderItem={({ item }) => (
+            <View
+              style={[
+                styles.messageBubble,
+                item.userId === user.uid
+                  ? styles.sentMessage
+                  : styles.receivedMessage,
+              ]}>
+              <Text style={styles.messageText}>{item.text}</Text>
+              {/* <Text style={styles.timestamp}>
+                15
+              </Text> */}
+            </View>
+          )}
+        />
+        
         <View style={styles.flexGrow} />
 
         <View style={styles.inputContainer}>
@@ -61,7 +140,7 @@ export default function ChatRoom() {
             multiline
           />
           <Pressable
-            onPress={sendMessage}
+            onPress={handleSendMessage}
             style={[
               styles.sendButton,
               !newMessage.trim() && styles.sendButtonDisabled,
@@ -126,5 +205,35 @@ const styles = StyleSheet.create({
   },
   sendButtonDisabled: {
     backgroundColor: '#E9E9EB',
+  },
+
+
+  messageList: {
+    padding: 16,
+  },
+  messageBubble: {
+    maxWidth: '80%',
+    padding: 12,
+    borderRadius: 16,
+    marginBottom: 8,
+  },
+  sentMessage: {
+    backgroundColor: '#007AFF',
+    alignSelf: 'flex-end',
+    borderBottomRightRadius: 4,
+  },
+  receivedMessage: {
+    backgroundColor: '#E9E9EB',
+    alignSelf: 'flex-start',
+    borderBottomLeftRadius: 4,
+  },
+  messageText: {
+    fontSize: 16,
+    color: '#000',
+  },
+  timestamp: {
+    fontSize: 12,
+    color: '#666',
+    marginTop: 4,
   },
 });

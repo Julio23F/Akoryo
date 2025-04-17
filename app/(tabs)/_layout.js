@@ -11,7 +11,7 @@ export default function TabLayout() {
           borderTopWidth: 1,
           borderTopColor: '#eee',
         },
-        tabBarActiveTintColor: '#0c3141',
+        tabBarActiveTintColor: '#E0363A',
       }}>
       <Tabs.Screen
         name="home"
