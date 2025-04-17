@@ -15,12 +15,12 @@ import { Box } from '@/components/Box';
 import { useRouter } from 'expo-router';
 import { MessageSquare, Eye, EyeOff } from 'lucide-react-native';
 import { StatusBar } from 'expo-status-bar';
-import { useAuh } from '../context/authContext';
+import { useAuth } from '../../context/authContext';
 import { ActivityIndicator } from 'react-native';
 
-export default function SingUp() {
+export default function SignUp() {
     const router = useRouter();
-    const {register} = useAuh();
+    const {register} = useAuth();
 
     const [loading, setLoading] = useState(false);
     const [username, setUsername] = useState('');
@@ -172,7 +172,7 @@ export default function SingUp() {
 
             <Box style={styles.footer}>
                 <Text style={styles.footerText}>Vous avez déjà un compte ? </Text>
-                <TouchableOpacity onPress={() => {router.replace("singIn");}}>
+                <TouchableOpacity onPress={() => {router.replace("signIn");}}>
                 <Text style={styles.signupText}>Se connecter</Text>
                 </TouchableOpacity>
             </Box>

@@ -1,11 +1,16 @@
 import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
 
-const ChatItem = ({ item }) => (
-    <Pressable style={styles.chatItem}>
+const ChatItem = ({ item, router }) => {
+  const openChatRoom = () => {
+    router.push({pathname: `/chat/${item.id}`, params: item});
+  }
+
+  return (
+    <Pressable onPress={openChatRoom} style={styles.chatItem}>
       <Image source={{ uri: item.avatar }} style={styles.avatar} />
       <View style={styles.messageContent}>
         <View style={styles.messageHeader}>
-          <Text style={styles.name}>{item.name}</Text>
+          <Text style={styles.name}>{item.username}</Text>
           <Text style={styles.timestamp}>{item.timestamp}</Text>
         </View>
         <Text 
@@ -20,6 +25,7 @@ const ChatItem = ({ item }) => (
       </View>
     </Pressable>
   );
+}
 
 const styles = StyleSheet.create({
     chatItem: {

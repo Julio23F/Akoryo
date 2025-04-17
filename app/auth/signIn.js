@@ -14,11 +14,11 @@ import { router } from 'expo-router';
 import { MessageSquare, Eye, EyeOff } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useAuh } from '../context/authContext';
+import { useAuth } from '../../context/authContext';
 
-export default function SingIn() {
+export default function SignIn() {
   const router = useRouter();
-  const { login } = useAuh();
+  const { login } = useAuth();
 
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
@@ -117,7 +117,7 @@ export default function SingIn() {
 
         <Box style={styles.footer}>
           <Text style={styles.footerText}>Don't have an account? </Text>
-          <TouchableOpacity onPress={() => { router.replace("singUp"); }}>
+          <TouchableOpacity onPress={() => { router.replace("auth/signUp"); }}>
             <Text style={styles.signupText}>Sign Up</Text>
           </TouchableOpacity>
         </Box>

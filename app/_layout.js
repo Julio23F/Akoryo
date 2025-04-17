@@ -1,26 +1,27 @@
 import { ThemedText } from '@/components/ThemedText';
 import { Box } from '@/components/Box';
 import { Slot, useRouter, useSegments } from 'expo-router';
-import { AuthContextProvider, useAuh } from '../context/authContext';
+import { AuthContextProvider, useAuth } from '../context/authContext';
 import { useEffect } from 'react';
 
 const MainLayout = () => {
-  const {isAuthentificated} = useAuh();
+  const {isAuthentificated} = useAuth();
   const segments = useSegments();
   const router = useRouter();
 
   useEffect(() => {
     console.log("segments", segments)
-    if (typeof isAuthentificated == undefined) return;
-    const inApp = segments[0] == '(app)';
+    if (typeof isAuthentificated === 'undefined') return;
+
+    const inTabs = segments[0] == '(tabs)';
     
-    if (isAuthentificated && !inApp){
+    if (isAuthentificated && !inTabs){
       //redirect to home
       router.replace("home");
     }
     else if(isAuthentificated == false) {
       // redirect to login
-      router.replace("singIn");
+      router.replace("auth/signIn");
 
     }
   },[isAuthentificated])

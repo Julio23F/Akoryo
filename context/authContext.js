@@ -95,7 +95,7 @@ export const AuthContextProvider = ({children}) => {
     )
 }
 
-export const useAuh = () => {
+export const useAuth = () => {
     const value = useContext(AuthContext);
 
 

@@ -1,6 +1,6 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { Mail, Bell, Globe2, CreditCard, Heart, Settings, LogOut } from 'lucide-react-native';
-import { useAuh } from '../../context/authContext';
+import { useAuth } from '../../context/authContext';
 import { useState } from 'react';
 
 const MENU_ITEMS = [
@@ -12,8 +12,8 @@ const MENU_ITEMS = [
   { icon: Settings, label: 'Settings' },
 ];
 
-export default function Profile() {
-  const { logout } = useAuh();
+const Profile = () => {
+  const { logout } = useAuth();
   const [isShowingModal, setShowModal] = useState(false);
 
   const handleLogout = async () => {
@@ -186,3 +186,6 @@ const styles = StyleSheet.create({
   }
   
 });
+
+
+export default Profile;
