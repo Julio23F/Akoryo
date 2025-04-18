@@ -1,8 +1,11 @@
 import { Tabs } from 'expo-router';
-import { Settings, User, Home, MessageCircle } from 'lucide-react-native';
+import { MessageCircle, User } from 'lucide-react-native';
 import { View, Text } from 'react-native';
+import { useUnreadMessages } from '../../context/UnreadMessagesContext';
 
 export default function TabLayout() {
+  const { unreadCount } = useUnreadMessages();
+
   return (
     <Tabs
       screenOptions={{
@@ -22,23 +25,25 @@ export default function TabLayout() {
           tabBarIcon: ({ size, color }) => (
             <View style={{ position: 'relative' }}>
               <MessageCircle size={size} color={color} />
-              <View
-                style={{
-                  position: 'absolute',
-                  top: -4,
-                  right: -6,
-                  backgroundColor: '#0c3141',
-                  borderRadius: 10,
-                  width: 18,
-                  height: 18,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <Text style={{ color: 'white', fontSize: 10, fontWeight: 'bold' }}>
-                  1
-                </Text>
-              </View>
+              {unreadCount > 0 && (
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: -4,
+                    right: -6,
+                    backgroundColor: '#0c3141',
+                    borderRadius: 10,
+                    width: 18,
+                    height: 18,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Text style={{ color: 'white', fontSize: 10, fontWeight: 'bold' }}>
+                    {unreadCount}
+                  </Text>
+                </View>
+              )}
             </View>
           ),
         }}

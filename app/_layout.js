@@ -2,6 +2,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { Box } from '@/components/Box';
 import { Slot, useRouter, useSegments } from 'expo-router';
 import { AuthContextProvider, useAuth } from '../context/authContext';
+import { UnreadMessagesProvider } from '../context/UnreadMessagesContext';
 import { useEffect } from 'react';
 
 const MainLayout = () => {
@@ -31,7 +32,9 @@ const MainLayout = () => {
 const RootLayout = () => {
   return (
     <AuthContextProvider>
+       <UnreadMessagesProvider>
         <MainLayout />
+       </UnreadMessagesProvider>
     </AuthContextProvider>
   )
 }
