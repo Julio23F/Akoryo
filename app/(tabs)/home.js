@@ -10,8 +10,9 @@ import { usersRef } from "../../firebaseConfig";
 import { useRouter } from 'expo-router';
 
 const MESSAGE_FORMAT = {
-  avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=faces',
+  avatar: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
 }
+
 
 const Home = () => {
   const {user} = useAuth();

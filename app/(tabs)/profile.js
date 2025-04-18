@@ -5,15 +5,15 @@ import { useState } from 'react';
 
 const MENU_ITEMS = [
   { icon: Mail, label: 'Edit profile' },
-  { icon: Bell, label: 'Notifications' },
-  { icon: Globe2, label: 'Language' },
-  { icon: CreditCard, label: 'My card' },
-  { icon: Heart, label: 'Favorite' },
-  { icon: Settings, label: 'Settings' },
+  // { icon: Bell, label: 'Notifications' },
+  // { icon: Globe2, label: 'Language' },
+  // { icon: CreditCard, label: 'My card' },
+  // { icon: Heart, label: 'Favorite' },
+  // { icon: Settings, label: 'Settings' },
 ];
 
 const Profile = () => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const [isShowingModal, setShowModal] = useState(false);
 
   const handleLogout = async () => {
@@ -25,11 +25,11 @@ const Profile = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Image
-          source={{ uri: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=400&h=400&q=80' }}
+          source={{ uri: user?.avatar }}
           style={styles.avatar}
         />
-        <Text style={styles.name}>Jimmy Sullivan</Text>
-        <Text style={styles.email}>jimmysullivan@gmail.com</Text>
+        <Text style={styles.name}>{user?.username}</Text>
+        <Text style={styles.email}>{user?.email}</Text>
       </View>
 
       <View style={styles.menuContainer}>

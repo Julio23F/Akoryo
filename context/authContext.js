@@ -9,36 +9,81 @@ export const AuthContextProvider = ({children}) => {
     const [user, setUser] = useState(null);
     const [isAuthentificated, setIsAuthentificated] = useState(undefined);
 
+    // useEffect(() => {
+
+    //     // setTimeout(() => {
+    //     //     setIsAuthentificated(true);
+    //     // }, 3000)
+    //     // setIsAuthentificated(false);
+    //     const unsub = onAuthStateChanged(auth, (user) => {
+    //         if(user) {
+    //             setIsAuthentificated(true);
+    //             let userData;
+                
+    //             const fetchUserData = async () => {
+    //                 const userData = await updateUserData(user.uid);
+    //                 return userData; 
+    //             };
+    //             userData = fetchUserData();
+            
+    //             console.log("test", userData)
+    //             setUser({
+    //                 avatar: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+    //                 ...user,
+    //                 ...fetchUserData()
+    //             });
+    //         }
+    //         else{
+    //             setIsAuthentificated(false);
+    //             setUser(null);
+    //         }
+    //     });
+    //     return unsub;
+
+    // }, []);
     useEffect(() => {
-
-        // setTimeout(() => {
-        //     setIsAuthentificated(true);
-        // }, 3000)
-        // setIsAuthentificated(false);
         const unsub = onAuthStateChanged(auth, (user) => {
-            if(user) {
-                setIsAuthentificated(true);
-                setUser(user);
-                updateUserData(user.uid);
+          const fetchUserData = async () => {
+            if (user) {
+              setIsAuthentificated(true);
+      
+              const userData = await updateUserData(user.uid);
+      
+              setUser({
+                avatar: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+                ...user,
+                ...userData,
+              });
+            } else {
+              setIsAuthentificated(false);
+              setUser(null);
             }
-            else{
-                setIsAuthentificated(false);
-                setUser(null);
-            }
+          };
+      
+          fetchUserData();
         });
+      
         return unsub;
-
     }, []);
+      
 
     const updateUserData = async (userId) => {
-        const docRef = doc(db, "users", userId);
-        const docSnap = getDoc(docRef);
-
-        if (docSnap.exists()) {
-            const data = docSnap.data();
-            setUser({...user, username: data.username, userid: data.userId});
-        }
-    }
+      const docRef = doc(db, "users", userId);
+      const docSnap = await getDoc(docRef);
+      console.log("docSnap", docSnap.exists());
+    
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        const user = {
+          username: data.username,
+        //   userid: data.userId,
+        };
+        return user;
+      }
+    
+      return null;
+    };
+    
 
     const login = async (email, password) => {
         try {
