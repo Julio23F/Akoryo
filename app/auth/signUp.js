@@ -172,7 +172,7 @@ export default function SignUp() {
 
             <Box style={styles.footer}>
                 <Text style={styles.footerText}>Vous avez déjà un compte ? </Text>
-                <TouchableOpacity onPress={() => {router.replace("signIn");}}>
+                <TouchableOpacity onPress={() => {router.replace("auth/signIn");}}>
                 <Text style={styles.signupText}>Se connecter</Text>
                 </TouchableOpacity>
             </Box>

@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect, useEffect } from 'react';
+import { useState, useLayoutEffect, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,18 +8,20 @@ import {
   FlatList,
   Image,
   Alert,
+  Keyboard,
 } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Send, ArrowLeft } from 'lucide-react-native';
 import ChatRoomHeader from '../../components/ChatRoomHeader';
 import { useAuth } from '../../context/authContext';
 import { getRoomId } from '../../utils/room';
-import { addDoc, collection, doc, onSnapshot, orderBy, setDoc, Timestamp, query } from 'firebase/firestore';
+import { addDoc, collection, doc, onSnapshot, orderBy, setDoc, Timestamp, query, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 
 export default function ChatRoom() {
   const item = useLocalSearchParams();
   const {user} = useAuth();
+  const scrollViewRef = useRef(null);
   const [newMessage, setNewMessage] = useState('');
   const [messages, setMessages] = useState([]);
 
@@ -27,26 +29,86 @@ export default function ChatRoom() {
     createRoomIfNotExists();
 
     getMessages();
+
+    // Pour rediriger directement vers le dernier message quand on ouvre le message
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow", updateScrollView
+    )
+    return () => {
+      keyboardDidShowListener.remove()
+    }
   }, []);
+
+  useEffect(() => {
+    // Pour rediriger vers le nouveau message
+    updateScrollView();
+  }, [messages])
+
+  const updateScrollView = () => {
+    setTimeout(() => {
+      scrollViewRef?.current?.scrollToEnd({animated: true})
+    }, 100)
+  }
+
+  // const getMessages = () => {
+  //   const roomId = getRoomId(user.uid, item.userId);
+  //   const docRef = doc(db, "rooms", roomId);
+  //   const messagesRef = collection(docRef, "messages");
+
+  //   const q = query(messagesRef, orderBy("createdAt", "asc"));
+
+  //   // onSnapshot (écoute en temps réel)
+  //   const unsub = onSnapshot(q, (snapshot) => {
+  //     let allMessages = snapshot.docs.map(doc => {
+  //       return doc.data();
+  //     });
+
+  //     setMessages([...allMessages]);
+  //   });
+  //   // return unsub;
+  // }
 
   const getMessages = () => {
     const roomId = getRoomId(user.uid, item.userId);
     const docRef = doc(db, "rooms", roomId);
     const messagesRef = collection(docRef, "messages");
-
+  
     const q = query(messagesRef, orderBy("createdAt", "asc"));
-
-    // onSnapshot (écoute en temps réel)
-    const unsub = onSnapshot(q, (snapshot) => {
-      let allMessages = snapshot.docs.map(doc => {
-        return doc.data();
-      });
-
+  
+    const unsub = onSnapshot(q, async (snapshot) => {
+      const allMessages = snapshot.docs.map(doc => doc.data());
       setMessages([...allMessages]);
+  
+      if (snapshot.docs.length === 0) return;
+  
+      const lastDoc = snapshot.docs[snapshot.docs.length - 1];
+      const lastMessage = lastDoc.data();
+  
+      if (
+        lastMessage.userId !== user.uid &&
+        lastMessage.read !== true
+      ) {
+        try {
+          await updateDoc(lastDoc.ref, { read: true });
+          console.log("lastMessage.userId", lastMessage.userId)
+          console.log("user.uid", user.uid)
+          console.log("user", user)
+
+          console.log("lastMessage.read", lastMessage.read)
+
+          console.log("lastMessage mis à jour :", lastMessage);
+
+
+        } catch (err) {
+          console.error("Erreur lors de la mise à jour du champ 'read' :", err);
+        }
+      }
     });
-    console.log("messages", messages)
-    return unsub;
-  }
+  
+    // Facultatif : retourne unsub si tu veux annuler l'écoute plus tard
+    // return unsub;
+  };
+  
 
   const createRoomIfNotExists = async() => {
     const roomId = getRoomId(user.uid, item.userId);
@@ -108,26 +170,64 @@ export default function ChatRoom() {
         item={item}
       />
       <View style={styles.container}>
+        {/* <FlatList
+          data={messages}
+          keyExtractor={(item) => item.createdAt}
+          // inverted
+          contentContainerStyle={styles.messageList}
+          ref={scrollViewRef}
+          renderItem={({ item }) => (
+            <View style={styles.bubbleContainer}>
+              <View
+                style={[
+                  styles.messageBubble,
+                  item.userId === user.uid
+                    ? styles.sentMessage
+                    : styles.receivedMessage,
+                ]}>
+                <Text style={styles.messageText}>{item.text}</Text>
+              </View>
+              <View style={styles.circleIndicator} />
+            </View>
+
+          )}
+        /> */}
         <FlatList
           data={messages}
           keyExtractor={(item) => item.createdAt}
-          inverted
           contentContainerStyle={styles.messageList}
-          renderItem={({ item }) => (
-            <View
-              style={[
-                styles.messageBubble,
-                item.userId === user.uid
-                  ? styles.sentMessage
-                  : styles.receivedMessage,
-              ]}>
-              <Text style={styles.messageText}>{item.text}</Text>
-              {/* <Text style={styles.timestamp}>
-                15
-              </Text> */}
-            </View>
-          )}
+          ref={scrollViewRef}
+          renderItem={({ item, index }) => {
+            const isLastMessage = index === messages.length - 1;
+            const showCircle = isLastMessage && item.userId === user.uid;
+            const isRead = item.read === true;
+
+            return (
+              <View style={styles.bubbleContainer}>
+                <View
+                  style={[
+                    styles.messageBubble,
+                    item.userId === user.uid
+                      ? styles.sentMessage
+                      : styles.receivedMessage,
+                  ]}
+                >
+                  <Text style={styles.messageText}>{item.text}</Text>
+                </View>
+
+                {showCircle && (
+                  <View
+                    style={[
+                      styles.circleIndicator,
+                      { backgroundColor: isRead ? '#736afb' : 'gray' }
+                    ]}
+                  />
+                )}
+              </View>
+            );
+          }}
         />
+
         
         <View style={styles.flexGrow} />
 
@@ -209,7 +309,7 @@ const styles = StyleSheet.create({
 
 
   messageList: {
-    padding: 16,
+    padding: 20,
   },
   messageBubble: {
     maxWidth: '80%',
@@ -218,7 +318,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   sentMessage: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#736afb',
     alignSelf: 'flex-end',
     borderBottomRightRadius: 4,
   },
@@ -236,4 +336,18 @@ const styles = StyleSheet.create({
     color: '#666',
     marginTop: 4,
   },
+
+  bubbleContainer: {
+    position: 'relative',
+    marginBottom: 16,
+  },
+  circleIndicator: {
+    position: 'absolute',
+    bottom: 5,
+    right: -17,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+  },
+
 });
