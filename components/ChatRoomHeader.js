@@ -18,10 +18,10 @@ export default function ChatRoomHeader({item}) {
 
             <View style={styles.headerTitle}>
                 <Image
-                source={{
-                    uri: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
-                }}
-                style={styles.headerAvatar}
+                  source={{
+                      uri: item.avatar,
+                  }}
+                  style={styles.headerAvatar}
                 />
                 <Text style={styles.headerName}>{item.username}</Text>
             </View>
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
       },
       
       backButton: {
-        marginRight: 12,
+        marginRight: 15,
       },
       
       headerTitle: {
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
         width: 32,
         height: 32,
         borderRadius: 16,
-        marginRight: 8,
+        marginRight: 12,
       },
       
       headerName: {
