@@ -36,28 +36,25 @@ const ChatItem = ({ item, router }) => {
 
   const renderLastMessage = (lastMessage) => {
     let message;
-    const isRead = lastMessage.read;
-    const iReceive = user?.uid !== lastMessage.userId;
+    const isRead = lastMessage?.read;
+    const iReceive = user?.uid !== lastMessage?.userId;
     console.log("typeof lastMessage", typeof lastMessage)
     if(typeof lastMessage == "undefined") {
       message = "Loading ...";
     }
     else{
       if(lastMessage){
-        if(user?.uid == lastMessage.userId) {
-          message =  "You: "+lastMessage.text;
+        if(user?.uid == lastMessage?.userId) {
+          message =  "You: "+lastMessage?.text;
         }
         else{
-          message = lastMessage.text;
+          message = lastMessage?.text;
         }
       }
       else{
         message = "Bienvenue à vous deux sur Akoyo 👋";
       }
     }
-
-    
-
 
     return (
       <Text 
@@ -75,7 +72,6 @@ const ChatItem = ({ item, router }) => {
 
   useEffect(() =>{
     getLastMessage();
-    console.log("lastMessageUN", lastMessage)
 
   }, []);
 
@@ -86,7 +82,7 @@ const ChatItem = ({ item, router }) => {
         <View style={styles.messageHeader}>
           <Text style={styles.name}>{item.username}</Text>
           <Text style={styles.timestamp}>
-            {lastMessage && formatMessageDate(lastMessage.createdAt)}
+            {lastMessage && formatMessageDate(lastMessage?.createdAt)}
           </Text>
         </View>
         {/* <Text 
@@ -98,7 +94,7 @@ const ChatItem = ({ item, router }) => {
         >
           {lastMessage && renderLastMessage(lastMessage)}
         </Text> */}
-        {lastMessage && renderLastMessage(lastMessage)}
+        {renderLastMessage(lastMessage)}
 
         <View
           style={[
