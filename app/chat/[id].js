@@ -17,6 +17,7 @@ import { useAuth } from '../../context/authContext';
 import { getRoomId } from '../../utils/room';
 import { addDoc, collection, doc, onSnapshot, orderBy, setDoc, Timestamp, query, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
+import { Check } from 'lucide-react-native';
 
 export default function ChatRoom() {
   const item = useLocalSearchParams();
@@ -216,12 +217,20 @@ export default function ChatRoom() {
                 </View>
 
                 {showCircle && (
+                  // <View
+                  //   style={[
+                  //     styles.circleIndicator,
+                  //     { backgroundColor: isRead ? '#736afb' : 'gray' }
+                  //   ]}
+                  // />
                   <View
                     style={[
-                      styles.circleIndicator,
-                      { backgroundColor: isRead ? '#736afb' : 'gray' }
+                      styles.circleIndicatorContainer,
+                      !isRead && styles.circleIndicatorUnread
                     ]}
-                  />
+                  >
+                    <Check size={10} color={isRead ? "#fff" : "#736afb"} />
+                  </View>
                 )}
               </View>
             );
@@ -339,15 +348,35 @@ const styles = StyleSheet.create({
 
   bubbleContainer: {
     position: 'relative',
-    marginBottom: 16,
+    // marginBottom: 0,
   },
-  circleIndicator: {
+  // circleIndicator: {
+  //   position: 'absolute',
+  //   bottom: 5,
+  //   right: -17,
+  //   width: 12,
+  //   height: 12,
+  //   borderRadius: 6,
+  // },
+
+  circleIndicatorContainer: {
+    borderWidth: 1,
+    borderColor: '#736afb',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: "#736afb",
+
     position: 'absolute',
-    bottom: 5,
-    right: -17,
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+    bottom: 6,
+    right: -18,
+    width: 14,
+    height: 14,
+    borderRadius: 10,
+  },
+  
+  circleIndicatorUnread: {
+    borderColor: 'gray',
+    backgroundColor: "transparent",
   },
 
 });

@@ -5,6 +5,7 @@ import { db } from '../firebaseConfig';
 import { useAuth } from '../context/authContext';
 import { useEffect, useState } from 'react';
 import {formatMessageDate} from '../utils/time';
+import { Check } from 'lucide-react-native';
 
 const ChatItem = ({ item, router }) => {
   const {user} = useAuth();
@@ -52,7 +53,7 @@ const ChatItem = ({ item, router }) => {
         }
       }
       else{
-        message = "Bienvenue à vous deux sur Akoyo 👋";
+        message = "Dis lui Akoyo 👋";
       }
     }
 
@@ -98,10 +99,12 @@ const ChatItem = ({ item, router }) => {
 
         <View
           style={[
-            styles.circleIndicator,
-            { backgroundColor: lastMessage?.read  ? '#736afb' : 'gray' }
+            styles.circleIndicatorContainer,
+            !lastMessage?.read && styles.circleIndicatorUnread
           ]}
-        />
+        >
+          <Check size={10} color={lastMessage?.read ? "#fff" : "#736afb"} />
+        </View>
       </View>
     </Pressable>
   );
@@ -146,13 +149,34 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
 
-    circleIndicator: {
+    // circleIndicator: {
+    //   position: 'absolute',
+    //   bottom: 5,
+    //   right: 0,
+    //   width: 12,
+    //   height: 12,
+    //   borderRadius: 6,
+    // },
+
+    circleIndicatorContainer: {
+      borderWidth: 1,
+      borderColor: '#736afb',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: "#736afb",
+
       position: 'absolute',
       bottom: 5,
       right: 0,
-      width: 12,
-      height: 12,
-      borderRadius: 6,
+      width: 16,
+      height: 16,
+      borderRadius: 10,
     },
+    
+    circleIndicatorUnread: {
+      borderColor: 'gray',
+      backgroundColor: "transparent",
+    },
+    
 })
 export default ChatItem;

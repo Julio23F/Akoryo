@@ -10,10 +10,8 @@ import { usersRef } from "../../firebaseConfig";
 import { useRouter } from 'expo-router';
 
 const MESSAGE_FORMAT = {
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=faces',
-    lastMessage: 'Looking forward to hearing back',
-    timestamp: 'Tuesday',
-  }
+  avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=faces',
+}
 
 const Home = () => {
   const {user} = useAuth();
