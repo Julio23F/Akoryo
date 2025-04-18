@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Text,
   TextInput,
@@ -8,6 +8,7 @@ import {
   Platform,
   Alert,
   ActivityIndicator,
+  View, // Importé pour l'overlay
 } from 'react-native';
 import { Box } from '@/components/Box';
 import { router } from 'expo-router';
@@ -25,9 +26,15 @@ export default function SignIn() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = async() => {
-    if(!(email && password)) {
-      Alert.alert("Sign In", "Veillez remplir tous les champs");
+  // const handleLogin = async () => {
+  //   setLoading(true);
+  //   // Implémentation du login ici (commentée pour l'exemple)
+  //   // const response = await login(email, password);
+  //   // setLoading(false);
+  // };
+  const handleLogin = async () => {
+    if (!(email && password)) {
+      Alert.alert("Connexion", "Veuillez remplir tous les champs");
       return;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -35,58 +42,68 @@ export default function SignIn() {
       Alert.alert("Adresse e-mail invalide", "Veuillez entrer une adresse e-mail valide.");
       return;
     }
-    
+
     setLoading(true);
 
     const response = await login(email, password);
-    setLoading(false);
 
-    if(!response.succes) {
-      Alert.alert("Inscription", response.msg);
+    if (!response.succes) {
+      setLoading(false);
+
+      Alert.alert("Connexion", response.msg);
       return;
     }
 
     // router.push('home');
   };
 
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
+      {loading && (
+        <View style={styles.overlay}>
+          {/* <ActivityIndicator size="large" color="#fff" /> */}
+        </View>
+      )}
+
       <Box style={styles.content}>
-        <StatusBar style='dark'/>
+        <StatusBar style='dark' />
         <Box style={styles.header}>
           <MessageSquare size={48} color="#0c3141" />
-          <Text style={styles.title}>Welcome Back</Text>
-          <Text style={styles.subtitle}>Sign in to continue</Text>
+          <Text style={styles.title}>Connexion</Text>
+          <Text style={styles.subtitle}>Connectez-vous pour continuer</Text>
         </Box>
 
         <Box style={styles.form}>
           <Box style={styles.inputContainer}>
-            <Text style={styles.label}>Email</Text>
+            <Text style={styles.label}>Adresse e-mail</Text>
             <TextInput
               style={styles.input}
-              placeholder="Enter your email"
+              placeholder="Entrez votre adresse e-mail"
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
               autoCapitalize="none"
               autoComplete="email"
+              editable={!loading} 
             />
           </Box>
 
           <Box style={styles.inputContainer}>
-            <Text style={styles.label}>Password</Text>
+            <Text style={styles.label}>Mot de passe</Text>
             <Box style={styles.passwordField}>
               <TextInput
                 style={[styles.input, { flex: 1, borderWidth: 0, backgroundColor: 'transparent' }]}
-                placeholder="Enter your password"
+                placeholder="Entrez votre mot de passe"
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
+                editable={!loading} 
               />
-              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+              <TouchableOpacity onPress={() => setShowPassword(!showPassword)} disabled={loading}>
                 {showPassword ? (
                   <EyeOff size={20} color="#999" />
                 ) : (
@@ -95,30 +112,35 @@ export default function SignIn() {
               </TouchableOpacity>
             </Box>
           </Box>
-          {
-            loading ? <ActivityIndicator />
-            :
-            <TouchableOpacity
-              style={styles.forgotPassword}
-              onPress={() => {
-                // Implémenter mot de passe oublié
-              }}
-            >
-              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-            </TouchableOpacity>
-          }
+          
           <TouchableOpacity
-            style={styles.loginButton}
-            onPress={handleLogin}
+            style={styles.forgotPassword}
+            onPress={() => {
+              Alert.alert("Fonctionnalité non disponible", "Nous travaillons actuellement sur l'implémentation de cette fonctionnalité. Merci de votre patience.");
+            }}
+            disabled={loading}
           >
-            <Text style={styles.loginButtonText}>Sign In</Text>
+            <Text style={styles.forgotPasswordText}>Mot de passe oublié ?</Text>
           </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.loginButton, loading && styles.loginButtonLoading]}
+            onPress={handleLogin}
+            disabled={loading} 
+          >
+            {loading ? (
+              <ActivityIndicator size="large" color="#fff" />
+            ) : (
+              <Text style={styles.loginButtonText}>Se connecter</Text>
+            )}
+          </TouchableOpacity>
+
         </Box>
 
         <Box style={styles.footer}>
-          <Text style={styles.footerText}>Don't have an account? </Text>
+          <Text style={styles.footerText}>Vous n'avez pas de compte ? </Text>
           <TouchableOpacity onPress={() => { router.replace("auth/signUp"); }}>
-            <Text style={styles.signupText}>Sign Up</Text>
+            <Text style={styles.signupText}>S'inscrire</Text>
           </TouchableOpacity>
         </Box>
       </Box>
@@ -195,11 +217,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 8,
+    flexDirection: 'row', // Ajouté pour aligner texte et l'indicateur de chargement
   },
   loginButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+  },
+  loginButtonLoading: {
+    backgroundColor: '#4f6d7a', // Changer la couleur de fond pendant le chargement
   },
   footer: {
     flexDirection: 'row',
@@ -214,5 +240,16 @@ const styles = StyleSheet.create({
     color: '#007AFF',
     fontSize: 14,
     fontWeight: '600',
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
   },
 });

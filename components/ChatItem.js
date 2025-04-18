@@ -16,7 +16,7 @@ const ChatItem = ({ item, router }) => {
   }
 
   const getLastMessage = () => {
-    const roomId = getRoomId(user.uid, item.userId);
+    const roomId = getRoomId(user?.uid, item.userId);
     const docRef = doc(db, "rooms", roomId);
     const messagesRef = collection(docRef, "messages");
 
@@ -37,23 +37,26 @@ const ChatItem = ({ item, router }) => {
   const renderLastMessage = (lastMessage) => {
     let message;
     const isRead = lastMessage.read;
-    const iReceive = user.uid !== lastMessage.userId;
-    
+    const iReceive = user?.uid !== lastMessage.userId;
+    console.log("typeof lastMessage", typeof lastMessage)
     if(typeof lastMessage == "undefined") {
       message = "Loading ...";
     }
-
-    if(lastMessage){
-      if(user.uid == lastMessage.userId) {
-        message =  "You: "+lastMessage.text;
+    else{
+      if(lastMessage){
+        if(user?.uid == lastMessage.userId) {
+          message =  "You: "+lastMessage.text;
+        }
+        else{
+          message = lastMessage.text;
+        }
       }
       else{
-        message = lastMessage.text;
+        message = "Bienvenue à vous deux sur Akoyo 👋";
       }
     }
-    else{
-      message = "Bienvenue à vous deux sur Akoyo 👋";
-    }
+
+    
 
 
     return (

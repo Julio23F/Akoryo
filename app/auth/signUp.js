@@ -9,9 +9,9 @@ import {
   ScrollView,
   Image,
   Alert,
+  View
 } from 'react-native';
 import { Box } from '@/components/Box';
-
 import { useRouter } from 'expo-router';
 import { MessageSquare, Eye, EyeOff } from 'lucide-react-native';
 import { StatusBar } from 'expo-status-bar';
@@ -19,171 +19,170 @@ import { useAuth } from '../../context/authContext';
 import { ActivityIndicator } from 'react-native';
 
 export default function SignUp() {
-    const router = useRouter();
-    const {register} = useAuth();
+  const router = useRouter();
+  const { register } = useAuth();
 
-    const [loading, setLoading] = useState(false);
-    const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfPassword, setShowConfPassword] = useState(false);
-    
-    const handleRegister = async () => {
-        if (!username || !email || !password || !confirmPassword) {
-          Alert.alert("Inscription", "Veuillez remplir tous les champs.");
-          return;
-        }
-      
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-          Alert.alert("Adresse e-mail invalide", "Veuillez entrer une adresse e-mail valide.");
-          return;
-        }
-      
-        if (password.length < 6) {
-          Alert.alert("Mot de passe trop court", "Le mot de passe doit contenir au moins 6 caractères.");
-          return;
-        }
-      
-        if (password !== confirmPassword) {
-          Alert.alert("Erreur de confirmation", "Les mots de passe ne correspondent pas.");
-          return;
-        }
-      
-        setLoading(true);
-        const response = await register(username, email, password);
-        setLoading(false);
-      
-        if (!response.succes) {
-          Alert.alert("Inscription", response.msg);
-          return;
-        }
-      
-        // router.push("home");
-      };
-      
+  const [loading, setLoading] = useState(false);
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfPassword, setShowConfPassword] = useState(false);
 
-    return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={styles.container}
-        >
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-            <StatusBar style='dark'/>
-            <Box style={styles.content}>
-            <Box style={styles.header}>
-                <Image
-                source={{ uri: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=400&auto=format&fit=crop' }}
-                style={styles.headerImage}
-                />
-                <MessageSquare size={48} color="#0c3141" style={styles.logoIcon} />
-                <Text style={styles.title}>Créer un compte</Text>
-                <Text style={styles.subtitle}>Rejoignez notre communauté de messagerie</Text>
+  const handleRegister = async () => {
+    if (!username || !email || !password || !confirmPassword) {
+      Alert.alert('Inscription', 'Veuillez remplir tous les champs.');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      Alert.alert('Adresse e-mail invalide', 'Veuillez entrer une adresse e-mail valide.');
+      return;
+    }
+
+    if (password.length < 6) {
+      Alert.alert('Mot de passe trop court', 'Le mot de passe doit contenir au moins 6 caractères.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert('Erreur de confirmation', 'Les mots de passe ne correspondent pas.');
+      return;
+    }
+
+    setLoading(true);
+    const response = await register(username, email, password);
+
+    if (!response.succes) {
+      setLoading(false);
+
+      Alert.alert('Inscription', response.msg);
+      return;
+    }
+
+    // router.push("home");
+  };
+
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      {loading && (
+        <View style={styles.overlay}>
+          {/* <ActivityIndicator size="large" color="#fff" /> */}
+        </View>
+      )}
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <StatusBar style="dark" />
+        <Box style={styles.content}>
+          <Box style={styles.header}>
+            <Image
+              source={{ uri: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=400&auto=format&fit=crop' }}
+              style={styles.headerImage}
+            />
+            <MessageSquare size={48} color="#0c3141" style={styles.logoIcon} />
+            <Text style={styles.title}>Créer un compte</Text>
+            <Text style={styles.subtitle}>Rejoignez notre communauté de messagerie</Text>
+          </Box>
+
+          <Box style={styles.form}>
+            {/* Nom complet */}
+            <Box style={styles.inputContainer}>
+              <Text style={styles.label}>Nom complet</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Entrez votre nom complet"
+                value={username}
+                onChangeText={setUsername}
+                autoCapitalize="words"
+                autoComplete="name"
+              />
             </Box>
 
-            <Box style={styles.form}>
-                <Box style={styles.inputContainer}>
-                <Text style={styles.label}>Nom complet</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Entrez votre nom complet"
-                    value={username}
-                    onChangeText={setUsername}
-                    autoCapitalize="words"
-                    autoComplete="name"
-                />
-                </Box>
-
-                <Box style={styles.inputContainer}>
-                <Text style={styles.label}>Adresse e-mail</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Entrez votre adresse e-mail"
-                    value={email}
-                    onChangeText={setEmail}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    autoComplete="email"
-                />
-                </Box>
-
-                <Box style={styles.inputContainer}>
-                <Text style={styles.label}>Mot de passe</Text>
-                
-                <Box style={styles.passwordField}>
-                    <TextInput
-                        style={[styles.input, { flex: 1, borderWidth: 0, backgroundColor: 'transparent' }]}
-                        placeholder="Enter your password"
-                        value={password}
-                        onChangeText={setPassword}
-                        secureTextEntry={!showPassword}
-                    />
-                    <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                    {showPassword ? (
-                        <EyeOff size={20} color="#999" />
-                    ) : (
-                        <Eye size={20} color="#999" />
-                    )}
-                    </TouchableOpacity>
-                </Box>
-                </Box>
-
-                <Box style={styles.inputContainer}>
-                {/* <Text style={styles.label}>Confirmer le mot de passe</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Confirmez votre mot de passe"
-                    value={confirmPassword}
-                    onChangeText={setConfirmPassword}
-                    secureTextEntry
-                /> */}
-                <Box style={styles.passwordField}>
-                    <TextInput
-                        style={[styles.input, { flex: 1, borderWidth: 0, backgroundColor: 'transparent' }]}
-                        placeholder="Confirmez votre mot de passe"
-                        value={confirmPassword}
-                        onChangeText={setConfirmPassword}
-                        secureTextEntry={!showConfPassword}
-                    />
-                    <TouchableOpacity onPress={() => setShowConfPassword(!showConfPassword)}>
-                    {showConfPassword ? (
-                        <EyeOff size={20} color="#999" />
-                    ) : (
-                        <Eye size={20} color="#999" />
-                    )}
-                    </TouchableOpacity>
-                </Box>
-                </Box>
-                {
-                    loading ? <ActivityIndicator />
-                    :
-                    <TouchableOpacity
-                        style={styles.registerButton}
-                        onPress={handleRegister}
-                        >
-                            <Text style={styles.registerButtonText}>Créer un compte</Text>
-                    </TouchableOpacity>
-
-                }
-                
+            {/* Adresse e-mail */}
+            <Box style={styles.inputContainer}>
+              <Text style={styles.label}>Adresse e-mail</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Entrez votre adresse e-mail"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoComplete="email"
+              />
             </Box>
 
-            <Box style={styles.footer}>
-                <Text style={styles.footerText}>Vous avez déjà un compte ? </Text>
-                <TouchableOpacity onPress={() => {router.replace("auth/signIn");}}>
-                <Text style={styles.signupText}>Se connecter</Text>
+            {/* Mot de passe */}
+            <Box style={styles.inputContainer}>
+              <Text style={styles.label}>Mot de passe</Text>
+              <Box style={styles.passwordField}>
+                <TextInput
+                  style={[styles.input, { flex: 1, borderWidth: 0, backgroundColor: 'transparent' }]}
+                  placeholder="Entrez votre mot de passe"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!showPassword}
+                />
+                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                  {showPassword ? (
+                    <EyeOff size={20} color="#999" />
+                  ) : (
+                    <Eye size={20} color="#999" />
+                  )}
                 </TouchableOpacity>
+              </Box>
             </Box>
 
-            <Text style={styles.termsText}>
-                En créant un compte, vous acceptez nos Conditions d'utilisation et notre Politique de confidentialité.
-            </Text>
+            {/* Confirmer le mot de passe */}
+            <Box style={styles.inputContainer}>
+              <Text style={styles.label}>Confirmer le mot de passe</Text>
+              <Box style={styles.passwordField}>
+                <TextInput
+                  style={[styles.input, { flex: 1, borderWidth: 0, backgroundColor: 'transparent' }]}
+                  placeholder="Confirmez votre mot de passe"
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  secureTextEntry={!showConfPassword}
+                />
+                <TouchableOpacity onPress={() => setShowConfPassword(!showConfPassword)}>
+                  {showConfPassword ? (
+                    <EyeOff size={20} color="#999" />
+                  ) : (
+                    <Eye size={20} color="#999" />
+                  )}
+                </TouchableOpacity>
+              </Box>
             </Box>
-        </ScrollView>
-        </KeyboardAvoidingView>
-    );
+
+            {/* Bouton d'inscription */}
+            {!loading ? (
+              <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
+                <Text style={styles.registerButtonText}>Créer un compte</Text>
+              </TouchableOpacity>
+            ) : (
+              <ActivityIndicator size="large" color="#fff" />
+            )}
+          </Box>
+
+          {/* Footer */}
+          <Box style={styles.footer}>
+            <Text style={styles.footerText}>Vous avez déjà un compte ? </Text>
+            <TouchableOpacity onPress={() => router.replace('auth/signIn')}>
+              <Text style={styles.signupText}>Se connecter</Text>
+            </TouchableOpacity>
+          </Box>
+
+          <Text style={styles.termsText}>
+            En créant un compte, vous acceptez nos Conditions d'utilisation et notre Politique de confidentialité.
+          </Text>
+        </Box>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -241,13 +240,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: '#F8F8F8',
   },
-  forgotPassword: {
-    alignSelf: 'flex-end',
-  },
-  forgotPasswordText: {
-    color: '#007AFF',
-    fontSize: 14,
-  },
   registerButton: {
     height: 48,
     backgroundColor: '#0c3141',
@@ -280,5 +272,16 @@ const styles = StyleSheet.create({
     marginTop: 16,
     fontSize: 12,
     color: '#999',
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
   },
 });
