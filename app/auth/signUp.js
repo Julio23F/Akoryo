@@ -62,7 +62,7 @@ export default function SignUp() {
       return;
     }
 
-    // router.push("home");
+    // router.push("messages");
   };
 
   return (

@@ -17,8 +17,8 @@ const MainLayout = () => {
     const inTabs = segments[0] == '(tabs)';
     
     if (isAuthentificated && !inTabs){
-      //redirect to home
-      router.replace("home");
+      //redirect to messages
+      router.replace("messages");
     }
     else if(isAuthentificated == false) {
       // redirect to login

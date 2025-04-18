@@ -1,31 +1,70 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet, Modal } from 'react-native';
-import { Mail, Bell, Globe2, CreditCard, Heart, Settings, LogOut } from 'lucide-react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Modal, Alert } from 'react-native';
+import { Mail, LogOut } from 'lucide-react-native';
 import { useAuth } from '../../context/authContext';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import * as ImagePicker from 'expo-image-picker';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '@/firebaseConfig';
 
 const MENU_ITEMS = [
   { icon: Mail, label: 'Edit profile' },
-  // { icon: Bell, label: 'Notifications' },
-  // { icon: Globe2, label: 'Language' },
-  // { icon: CreditCard, label: 'My card' },
-  // { icon: Heart, label: 'Favorite' },
-  // { icon: Settings, label: 'Settings' },
 ];
 
 const Profile = () => {
   const { logout, user } = useAuth();
   const [isShowingModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedImageUri, setSelectedImageUri] = useState(null);
 
   const handleLogout = async () => {
     await logout();
     setShowModal(false);
   };
 
+  const pickImage = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permissionResult.granted) {
+      Alert.alert("Permission requise", "L'accès à la galerie est nécessaire pour modifier la photo de profil.");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const uri = result.assets[0].uri;
+      
+      setShowEditModal(false);
+
+      setSelectedImageUri(uri);
+
+      try {
+        await updateDoc(doc(db, "users", user?.uid), { 
+          avatar: uri 
+        });
+        console.log("Image updated");
+      } catch (e) {
+        console.log("Erreur dans updateDoc :", e.message);
+        return { succes: false, msg: "Erreur lors de l'update de l'image dans la base de données" };
+      }
+    }
+
+  };
+
+  useEffect(()=>{
+    console.log("avatar", user.avatar)
+  }, [])
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Image
-          source={{ uri: user?.avatar }}
+          source={{ uri: selectedImageUri || user?.avatar }}
           style={styles.avatar}
         />
         <Text style={styles.name}>{user?.username}</Text>
@@ -34,18 +73,27 @@ const Profile = () => {
 
       <View style={styles.menuContainer}>
         {MENU_ITEMS.map((item, index) => (
-          <TouchableOpacity key={index} style={[styles.menuItem, styles.borderBottom]}>
+          <TouchableOpacity
+            key={index}
+            style={[styles.menuItem, styles.borderBottom]}
+            onPress={() => {
+              if (item.label === 'Edit profile') {
+                setShowEditModal(true);
+              }
+            }}
+          >
             <item.icon size={24} color="#666" />
             <Text style={styles.menuText}>{item.label}</Text>
           </TouchableOpacity>
         ))}
+
         <TouchableOpacity style={styles.menuItem} onPress={() => setShowModal(true)}>
           <LogOut size={24} color="#666" />
           <Text style={styles.menuText}>Logout</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Modal de confirmation */}
+      {/* Modal de déconnexion */}
       <Modal
         animationType="fade"
         transparent={true}
@@ -67,9 +115,32 @@ const Profile = () => {
           </View>
         </View>
       </Modal>
+
+      {/* Modal d'édition du profil */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={showEditModal}
+        onRequestClose={() => setShowEditModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Modifier la photo de profil ?</Text>
+            <Text style={styles.modalMessage}>Voulez-vous sélectionner une nouvelle image depuis votre galerie ?</Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity style={styles.cancelButton} onPress={() => setShowEditModal(false)}>
+                <Text style={styles.cancelText}>Annuler</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.confirmButton} onPress={pickImage}>
+                <Text style={styles.confirmText}>Choisir une image</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
-}
+};
 
 
 const styles = StyleSheet.create({
@@ -116,22 +187,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
-  // logoutButton: {
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  //   backgroundColor: '#0c3141',
-  //   paddingVertical: 16,
-  //   borderRadius: 12,
-  //   marginTop: 'auto',
-  //   marginBottom: 30,
-  // },
-  // logoutText: {
-  //   color: '#fff',
-  //   fontSize: 16,
-  //   fontWeight: '600',
-  //   marginLeft: 8,
-  // },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.4)',
@@ -183,9 +238,7 @@ const styles = StyleSheet.create({
   confirmText: {
     color: '#fff',
     fontWeight: '600',
-  }
-  
+  },
 });
-
 
 export default Profile;

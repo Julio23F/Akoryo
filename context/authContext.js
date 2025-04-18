@@ -75,7 +75,7 @@ export const AuthContextProvider = ({children}) => {
         const data = docSnap.data();
         const user = {
           username: data.username,
-        //   userid: data.userId,
+          avatar: data.avatar,
         };
         return user;
       }

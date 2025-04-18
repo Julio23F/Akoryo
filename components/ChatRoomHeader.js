@@ -7,8 +7,12 @@ import {
   } from 'react-native';
 import { ArrowLeft } from 'lucide-react-native';
 import { Stack, useNavigation } from 'expo-router';
+import { useEffect } from 'react';
 
 export default function ChatRoomHeader({item}) {
+    useEffect(()=>{
+      console.log("ChatRoomHeader", item.avatar)
+    },[])
     const navigation = useNavigation();
     return (
         <View style={styles.customHeader}>
@@ -19,7 +23,7 @@ export default function ChatRoomHeader({item}) {
             <View style={styles.headerTitle}>
                 <Image
                   source={{
-                      uri: item.avatar,
+                      uri: item?.avatar,
                   }}
                   style={styles.headerAvatar}
                 />

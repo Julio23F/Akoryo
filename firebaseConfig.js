@@ -1,10 +1,8 @@
-// Import SDKs
 import { initializeApp } from "firebase/app";
 import { getAuth, initializeAuth, getReactNativePersistence } from "firebase/auth";
 import { getFirestore, collection } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-// Platform check
 import Constants from "expo-constants";
 
 // Firebase config
@@ -18,28 +16,27 @@ const firebaseConfig = {
   measurementId: "G-2HE190G3SX"
 };
 
+
 // Initialize app
 const app = initializeApp(firebaseConfig);
 
-// Handle Auth depending on platform
+// Auth
 let auth;
-
 if (Constants?.platform?.android || Constants?.platform?.ios) {
-  // Mobile (React Native)
   auth = initializeAuth(app, {
     persistence: getReactNativePersistence(AsyncStorage),
   });
 } else {
-  // Web
   auth = getAuth(app);
 }
 
 // Firestore
 const db = getFirestore(app);
-
-// Collections
 const usersRef = collection(db, "users");
 const roomRef = collection(db, "rooms");
 
+// Storage
+const storage = getStorage(app);
+
 // Exports
-export { auth, db, usersRef, roomRef };
+export { auth, db, usersRef, roomRef, storage };
