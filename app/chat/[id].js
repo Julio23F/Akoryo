@@ -55,20 +55,34 @@ export default function ChatRoom() {
   //   const roomId = getRoomId(user.uid, item.userId);
   //   const docRef = doc(db, "rooms", roomId);
   //   const messagesRef = collection(docRef, "messages");
-
+  
   //   const q = query(messagesRef, orderBy("createdAt", "asc"));
-
-  //   // onSnapshot (écoute en temps réel)
-  //   const unsub = onSnapshot(q, (snapshot) => {
-  //     let allMessages = snapshot.docs.map(doc => {
-  //       return doc.data();
-  //     });
-
+  
+  //   const unsub = onSnapshot(q, async (snapshot) => {
+  //     const allMessages = snapshot.docs.map(doc => doc.data());
   //     setMessages([...allMessages]);
+  
+  //     if (snapshot.docs.length === 0) return;
+  
+  //     const lastDoc = snapshot.docs[snapshot.docs.length - 1];
+  //     const lastMessage = lastDoc.data();
+  
+  //     if (
+  //       lastMessage.userId !== user.uid &&
+  //       lastMessage.read !== true
+  //     ) {
+  //       try {
+  //         await updateDoc(lastDoc.ref, { read: true });
+  //         console.log("lastMessage.userId", lastMessage.userId)
+  //       } catch (err) {
+  //         console.error("Erreur lors de la mise à jour du champ 'read' :", err);
+  //       }
+  //     }
   //   });
+  
+  //   // Facultatif : retourne unsub si tu veux annuler l'écoute plus tard
   //   // return unsub;
-  // }
-
+  // };
   const getMessages = () => {
     const roomId = getRoomId(user.uid, item.userId);
     const docRef = doc(db, "rooms", roomId);
@@ -80,35 +94,32 @@ export default function ChatRoom() {
       const allMessages = snapshot.docs.map(doc => doc.data());
       setMessages([...allMessages]);
   
-      if (snapshot.docs.length === 0) return;
+      if (snapshot.empty) return;
   
-      const lastDoc = snapshot.docs[snapshot.docs.length - 1];
-      const lastMessage = lastDoc.data();
+      const unreadMessages = snapshot.docs.filter(doc => {
+        const msg = doc.data();
+        return msg.userId !== user.uid && msg.read !== true;
+      });
   
-      if (
-        lastMessage.userId !== user.uid &&
-        lastMessage.read !== true
-      ) {
-        try {
-          await updateDoc(lastDoc.ref, { read: true });
-          console.log("lastMessage.userId", lastMessage.userId)
-          console.log("user.uid", user.uid)
-          console.log("user", user)
-
-          console.log("lastMessage.read", lastMessage.read)
-
-          console.log("lastMessage mis à jour :", lastMessage);
-
-
-        } catch (err) {
-          console.error("Erreur lors de la mise à jour du champ 'read' :", err);
+      // Mettre à jour tous les messages non lus envoyés par l'autre utilisateur
+      try {
+        const updatePromises = unreadMessages.map(docSnap => {
+          return updateDoc(docSnap.ref, { read: true });
+        });
+  
+        await Promise.all(updatePromises);
+        if (unreadMessages.length > 0) {
+          console.log(`${unreadMessages.length} message(s) marqué(s) comme lu(s)`);
         }
+      } catch (err) {
+        console.error("Erreur lors de la mise à jour des messages non lus :", err);
       }
     });
   
-    // Facultatif : retourne unsub si tu veux annuler l'écoute plus tard
+    // return unsub si tu veux te désabonner plus tard
     // return unsub;
   };
+  
   
 
   const createRoomIfNotExists = async() => {

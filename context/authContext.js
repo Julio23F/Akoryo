@@ -70,7 +70,6 @@ export const AuthContextProvider = ({children}) => {
     const updateUserData = async (userId) => {
       const docRef = doc(db, "users", userId);
       const docSnap = await getDoc(docRef);
-      console.log("docSnap", docSnap.exists());
     
       if (docSnap.exists()) {
         const data = docSnap.data();

@@ -22,14 +22,15 @@ const ChatItem = ({ item, router }) => {
     const messagesRef = collection(docRef, "messages");
 
     const q = query(messagesRef, orderBy("createdAt", "desc"));
-
+    let unreadMessage = 0;
     // onSnapshot (écoute en temps réel)
     const unsub = onSnapshot(q, (snapshot) => {
       let allMessages = snapshot.docs.map(doc => {
+        if(!doc.data().read) unreadMessage++;
         return doc.data();
       });
 
-      setLastMessage(allMessages[0] ? allMessages[0] : null);
+      setLastMessage(allMessages[0] ? {...allMessages[0], unreadMessage} : null);
     });
 
     return unsub;
@@ -39,14 +40,13 @@ const ChatItem = ({ item, router }) => {
     let message;
     const isRead = lastMessage?.read;
     const iReceive = user?.uid !== lastMessage?.userId;
-    console.log("typeof lastMessage", typeof lastMessage)
     if(typeof lastMessage == "undefined") {
       message = "Loading ...";
     }
     else{
       if(lastMessage){
         if(user?.uid == lastMessage?.userId) {
-          message =  "You: "+lastMessage?.text;
+          message =  "Vous: "+lastMessage?.text;
         }
         else{
           message = lastMessage?.text;
@@ -61,13 +61,44 @@ const ChatItem = ({ item, router }) => {
       <Text 
           style={[
             styles.lastMessage,
-            isRead && iReceive ? styles.unreadMessage : null
+            !isRead && iReceive ? styles.unreadMessage : null,
+            { paddingRight: 10 }
           ]}
           numberOfLines={1}
       >
         {message}
       </Text>
     )
+  }
+
+  const renderMessageStatus = (lastMessage) => {
+
+    if(lastMessage?.userId === user?.uid){
+      // if(false){
+      return (
+        <View
+          style={[
+            styles.circleIndicatorContainer,
+            !lastMessage?.read && styles.circleIndicatorUnread
+          ]}
+        >
+          <Check size={10} color={lastMessage?.read ? "#fff" : "#736afb"} />
+        </View>
+      );
+    }
+    else if(lastMessage?.unreadMessage){
+      return (
+        <View
+          style={[
+            styles.unreadContainNumber
+          ]}
+        >
+          <Text style={ styles.unreadMessageNumber}>{lastMessage?.unreadMessage}</Text> 
+        </View>
+      )
+    }
+    return null;
+      
   }
 
 
@@ -97,14 +128,10 @@ const ChatItem = ({ item, router }) => {
         </Text> */}
         {renderLastMessage(lastMessage)}
 
-        <View
-          style={[
-            styles.circleIndicatorContainer,
-            !lastMessage?.read && styles.circleIndicatorUnread
-          ]}
-        >
-          <Check size={10} color={lastMessage?.read ? "#fff" : "#736afb"} />
-        </View>
+        {renderMessageStatus(lastMessage)}
+        
+
+        
       </View>
     </Pressable>
   );
@@ -177,6 +204,26 @@ const styles = StyleSheet.create({
       borderColor: 'gray',
       backgroundColor: "transparent",
     },
+
+    unreadContainNumber: {
+      borderWidth: 2,
+      borderColor: '#736afb',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: "transparent",
+
+      position: 'absolute',
+      bottom: 5,
+      right: 0,
+      width: 19,
+      height: 19,
+      borderRadius: 10,
+    },
+    unreadMessageNumber: {
+      color: "#736afb",
+      fontWeight: "bold",
+      marginTop: -2
+    }
     
 })
 export default ChatItem;
