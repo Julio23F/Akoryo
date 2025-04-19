@@ -21,10 +21,14 @@ export default function ChatRoomHeader({item}) {
             </Pressable>
 
             <View style={styles.headerTitle}>
-                <Image
+                {/* <Image
                   source={{
                       uri: item?.avatar,
                   }}
+                  style={styles.headerAvatar}
+                /> */}
+                <Image
+                  source={{ uri: (item?.avatar ? `data:image/jpeg;base64,${item.avatar}` : "https://cdn-icons-png.flaticon.com/512/149/149071.png") }}
                   style={styles.headerAvatar}
                 />
                 <Text style={styles.headerName}>{item.username}</Text>

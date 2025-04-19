@@ -109,7 +109,11 @@ const ChatItem = ({ item, router }) => {
 
   return (
     <Pressable onPress={openChatRoom} style={styles.chatItem}>
-      <Image source={{ uri: item.avatar }} style={styles.avatar} />
+      {/* <Image source={{ uri: item.avatar }} style={styles.avatar} /> */}
+      <Image
+        source={{ uri: (item?.avatar ? `data:image/jpeg;base64,${item.avatar}` : "https://cdn-icons-png.flaticon.com/512/149/149071.png") }}
+        style={styles.avatar}
+      />
       <View style={styles.messageContent}>
         <View style={styles.messageHeader}>
           <Text style={styles.name}>{item.username}</Text>

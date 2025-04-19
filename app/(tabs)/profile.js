@@ -36,24 +36,49 @@ const Profile = () => {
       quality: 1,
     });
 
+    // if (!result.canceled) {
+    //   const uri = result.assets[0].uri;
+      
+    //   setShowEditModal(false);
+
+    //   setSelectedImageUri(uri);
+
+    //   try {
+    //     await updateDoc(doc(db, "users", user?.uid), { 
+    //       avatar: uri 
+    //     });
+    //     console.log("Image updated");
+    //   } catch (e) {
+    //     console.log("Erreur dans updateDoc :", e.message);
+    //     return { succes: false, msg: "Erreur lors de l'update de l'image dans la base de données" };
+    //   }
+    // }
     if (!result.canceled) {
       const uri = result.assets[0].uri;
-      
-      setShowEditModal(false);
-
-      setSelectedImageUri(uri);
-
-      try {
-        await updateDoc(doc(db, "users", user?.uid), { 
-          avatar: uri 
-        });
-        console.log("Image updated");
-      } catch (e) {
-        console.log("Erreur dans updateDoc :", e.message);
-        return { succes: false, msg: "Erreur lors de l'update de l'image dans la base de données" };
-      }
+    
+      const response = await fetch(uri);
+      const blob = await response.blob();
+    
+      const reader = new FileReader();
+    
+      reader.onloadend = async () => {
+        const base64data = reader.result.split(',')[1];
+        setShowEditModal(false);
+        setSelectedImageUri(`data:image/jpeg;base64,${base64data}`);
+    
+        try {
+          await updateDoc(doc(db, "users", user?.uid), { 
+            avatar: base64data
+          });
+          console.log("Image updated");
+        } catch (e) {
+          console.log("Erreur dans updateDoc :", e.message);
+        }
+      };
+    
+      reader.readAsDataURL(blob);
     }
-
+    
   };
 
   useEffect(()=>{
@@ -63,10 +88,16 @@ const Profile = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Image
+        {/* <Image
           source={{ uri: selectedImageUri || user?.avatar }}
           style={styles.avatar}
+        /> */}
+        <Image
+          source={{ uri: selectedImageUri || (user?.avatar ? `data:image/jpeg;base64,${user.avatar}` : "https://cdn-icons-png.flaticon.com/512/149/149071.png") }}
+          style={styles.avatar}
         />
+
+
         <Text style={styles.name}>{user?.username}</Text>
         <Text style={styles.email}>{user?.email}</Text>
       </View>

@@ -9,9 +9,6 @@ import { usersRef, db } from "../../firebaseConfig";
 import { useRouter } from 'expo-router';
 import { getRoomId } from '@/utils/room';
 
-const MESSAGE_FORMAT = {
-  avatar: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
-};
 
 const Home = () => {
   const { user } = useAuth();
@@ -28,7 +25,7 @@ const Home = () => {
       let tempUsers = [];
 
       for (const docSnap of querySnapshot.docs) {
-        const userData = { ...MESSAGE_FORMAT, ...docSnap.data() };
+        const userData = { ...docSnap.data() };
         tempUsers.push(userData);
       }
 

@@ -50,7 +50,6 @@ export const AuthContextProvider = ({children}) => {
               const userData = await updateUserData(user.uid);
       
               setUser({
-                avatar: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
                 ...user,
                 ...userData,
               });
