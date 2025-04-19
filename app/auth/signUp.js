@@ -159,13 +159,14 @@ export default function SignUp() {
             </Box>
 
             {/* Bouton d'inscription */}
-            {!loading ? (
-              <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-                <Text style={styles.registerButtonText}>Créer un compte</Text>
-              </TouchableOpacity>
-            ) : (
+            
+            <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
+            {loading ? (
               <ActivityIndicator size="large" color="#fff" />
+            ) : (
+              <Text style={styles.registerButtonText}>Créer un compte</Text>
             )}
+            </TouchableOpacity>
           </Box>
 
           {/* Footer */}
