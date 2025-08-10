@@ -7,7 +7,7 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '@/firebaseConfig';
 
 const MENU_ITEMS = [
-  { icon: Mail, label: 'Edit profile' },
+  { icon: Mail, label: 'Test update' },
 ];
 
 const Profile = () => {

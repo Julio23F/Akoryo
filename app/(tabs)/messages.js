@@ -82,7 +82,7 @@ const Home = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Box style={styles.header}>
-        <Text style={styles.title}>Messages</Text>
+        <Text style={styles.title}>Test update</Text>
       </Box>
 
       {loading ? (
