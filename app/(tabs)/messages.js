@@ -82,7 +82,7 @@ const Home = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Box style={styles.header}>
-        <Text style={styles.title}>Test update</Text>
+        <Text style={styles.title}>Messages</Text>
       </Box>
 
       {loading ? (
@@ -104,12 +104,12 @@ const Home = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'red',
+    backgroundColor: '#fff',
   },
   header: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: 'red',
+    borderBottomColor: '#E5E5E5',
   },
   title: {
     fontSize: 32,

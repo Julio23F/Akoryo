@@ -7,7 +7,7 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '@/firebaseConfig';
 
 const MENU_ITEMS = [
-  { icon: Mail, label: 'Test update' },
+  { icon: Mail, label: 'Edit profile' },
 ];
 
 const Profile = () => {
@@ -177,7 +177,7 @@ const Profile = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'red',
+    backgroundColor: '#fff',
     paddingHorizontal: 20,
   },
   header: {
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContainer: {
-    backgroundColor: 'red',
+    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 24,
     width: '80%',
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   confirmText: {
-    color: 'red',
+    color: '#fff',
     fontWeight: '600',
   },
 });

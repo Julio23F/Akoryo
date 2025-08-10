@@ -173,7 +173,7 @@ export default function ChatRoom() {
             </Pressable>
           ),
           headerStyle: {
-            backgroundColor: 'red',
+            backgroundColor: '#fff',
           },
           headerShadowVisible: false,
         }}
@@ -240,7 +240,7 @@ export default function ChatRoom() {
                       !isRead && styles.circleIndicatorUnread
                     ]}
                   >
-                    <Check size={10} color={isRead ? "red" : "#736afb"} />
+                    <Check size={10} color={isRead ? "#fff" : "#736afb"} />
                   </View>
                 )}
               </View>
@@ -267,7 +267,7 @@ export default function ChatRoom() {
             ]}>
             <Send
               size={24}
-              color={newMessage.trim() ? 'red' : '#A0A0A0'}
+              color={newMessage.trim() ? '#fff' : '#A0A0A0'}
             />
           </Pressable>
         </View>
@@ -279,7 +279,7 @@ export default function ChatRoom() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'red',
+    backgroundColor: '#fff',
   },
   flexGrow: {
     flex: 1,
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderTopWidth: 1,
     borderTopColor: '#e5e5e5',
-    backgroundColor: 'red',
+    backgroundColor: '#fff',
   },
   input: {
     flex: 1,
