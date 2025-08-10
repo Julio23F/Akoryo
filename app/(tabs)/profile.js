@@ -177,7 +177,7 @@ const Profile = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'red',
     paddingHorizontal: 20,
   },
   header: {
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: 'red',
     borderRadius: 12,
     padding: 24,
     width: '80%',
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   confirmText: {
-    color: '#fff',
+    color: 'red',
     fontWeight: '600',
   },
 });
