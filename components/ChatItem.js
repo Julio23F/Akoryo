@@ -53,7 +53,7 @@ const ChatItem = ({ item, router }) => {
         }
       }
       else{
-        message = "Dis lui Akoyo 👋";
+        message = "Test update 👋";
       }
     }
 
